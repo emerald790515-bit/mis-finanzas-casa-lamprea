@@ -1,0 +1,18 @@
+MIS FINANZAS · CASA LAMPREA — PAQUETE WEB INSTALABLE
+
+Contenido: index.html, manifest.webmanifest, sw.js e iconos.
+
+IMPORTANTE PARA CONSERVAR TUS DATOS
+1. En la versión que ya usas, abre Datos y respaldo > Descargar copia JSON. Guarda el archivo en Descargas.
+2. Publica TODOS los archivos de esta carpeta en un alojamiento HTTPS estático. No abras index.html directamente desde la carpeta: para instalar como PWA debe servirse por HTTPS (o localhost).
+3. Abre la URL HTTPS publicada en Chrome para Android. En el menú ⋮ elige “Instalar aplicación” o “Añadir a pantalla de inicio”, según lo que muestre Chrome.
+4. Abre la aplicación instalada. En Datos y respaldo > Importar copia JSON, selecciona el archivo de respaldo que guardaste. La importación reemplaza los datos existentes en la versión web, así que úsala solo si la app nueva está vacía o si quieres sustituir sus datos.
+5. Verifica los movimientos y conserva el JSON en un lugar seguro.
+
+PRIVACIDAD Y LÍMITES
+- Los datos se guardan localmente en el navegador/origen de la aplicación, no en una base de datos en la nube. La versión publicada tiene un almacenamiento distinto al archivo local; por eso es necesario importar el respaldo.
+- Publicar estos archivos hace que la aplicación esté disponible en la web, pero no publica automáticamente tus datos personales: esos están en el archivo JSON de respaldo, que NO debes subir al sitio.
+- No subas el archivo de respaldo JSON al alojamiento web.
+- Este paquete conserva la app actual como versión inicial; no convierte el prototipo en software contable certificado ni añade sincronización entre dispositivos.
+
+ACTUALIZACION: El formulario de saldos iniciales permite registrar tanto dinero disponible como deudas iniciales. Las deudas se suman a pasivos y no reducen el saldo de caja.

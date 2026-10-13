@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi Finanzas | CASA Lamprea</title>
+<style>
+:root{--navy:#173b34;--gold:#c4a66a;--bg:#f4f5f2;--card:#fff;--ink:#202823;--muted:#68736c;--line:#dfe5df;--green:#287c64;--red:#b94d4d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:white;padding:22px max(18px,calc((100% - 1100px)/2));border-bottom:4px solid var(--gold)}
+header .eyebrow{font-size:11px;letter-spacing:.16em;color:#d9e5de}header h1{margin:5px 0;font-size:25px}header p{margin:0;color:#d9e5de;font-size:13px}
+main{max-width:1100px;margin:auto;padding:18px}
+nav{display:flex;gap:8px;overflow:auto;padding-bottom:12px;margin-bottom:8px}
+nav button{white-space:nowrap;border:1px solid var(--line);background:white;color:var(--ink);padding:10px 14px;border-radius:12px;font-weight:650;cursor:pointer}
+nav button.active{background:var(--navy);color:white;border-color:var(--navy)}
+.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}.card h3{font-size:14px;margin:0 0 10px;color:var(--muted);font-weight:600}.metric{font-size:clamp(20px,3vw,28px);font-weight:750;letter-spacing:-.04em;overflow-wrap:anywhere}.green{color:var(--green)}.red{color:var(--red)}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 10px}.section-head h2{margin:0;font-size:20px}.muted{color:var(--muted);font-size:13px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:13px;font-weight:650;color:#455149}.field input,.field select,.field textarea{width:100%;border:1px solid #ccd5ce;border-radius:10px;padding:11px 12px;background:white;font:inherit;color:var(--ink)}.field textarea{min-height:75px;resize:vertical}.full{grid-column:1/-1}.btn{border:0;border-radius:10px;padding:11px 15px;background:var(--navy);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:white;color:var(--navy);border:1px solid var(--line)}.btn.danger{background:#fff0f0;color:var(--red);border:1px solid #f0caca}.btn.small{padding:7px 10px;font-size:12px}.actions{display:flex;gap:7px;flex-wrap:wrap}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:white}table{border-collapse:collapse;width:100%;min-width:640px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}th{background:#f7f8f6;color:#5c685f;font-weight:700}tr:last-child td{border-bottom:0}.pill{display:inline-block;border-radius:999px;padding:3px 8px;background:#edf2ed;font-size:11px;font-weight:700}.empty{padding:25px;text-align:center;color:var(--muted)}.notice{padding:12px 14px;border-radius:12px;background:#eef4ef;border:1px solid #d7e4d8;font-size:13px;margin:12px 0}.notice.warn{background:#fff8e8;border-color:#f0dfb6}.hidden{display:none!important}.balance{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.balance .card{padding:13px}.bar{height:9px;background:#e7ece7;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:var(--green)}footer{max-width:1100px;margin:auto;padding:0 18px 28px;color:var(--muted);font-size:12px}
+@media(max-width:760px){main{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.balance{grid-template-columns:1fr}header{padding:18px}header h1{font-size:22px}.metric{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="eyebrow">CONTROL FINANCIERO PERSONAL Y COMERCIAL</div><h1>Mi Finanzas <span style="color:#d8bd83">·</span> CASA Lamprea</h1><p>Dos contabilidades, un patrimonio consolidado y registros editables.</p></header>
+<main>
+<div class="notice warn"><strong>Importante:</strong> esta versión guarda los datos en el almacenamiento local de este navegador. Exporta una copia de seguridad periódicamente. No sincroniza entre dispositivos ni reemplaza la contabilidad fiscal oficial.</div>
+<nav id="nav">
+<button class="active" data-tab="resumen">Resumen</button><button data-tab="movimientos">Movimientos</button><button data-tab="productos">Productos e inventario</button><button data-tab="patrimonio">Patrimonio</button><button data-tab="informes">Informes</button><button data-tab="ajustes">Datos y respaldo</button>
+</nav>
+<section id="resumen" class="panel active">
+<div class="section-head"><h2>Resumen financiero</h2><span class="muted" id="today"></span></div>
+<div class="grid">
+<div class="card"><h3>Saldo personal registrado</h3><div class="metric" id="personalBalance">$ 0</div><div class="muted">Ingresos − gastos ± transferencias</div></div>
+<div class="card"><h3>Saldo operativo CASA Lamprea</h3><div class="metric" id="businessBalance">$ 0</div><div class="muted">Entradas y salidas registradas</div></div>
+<div class="card"><h3>Patrimonio neto registrado</h3><div class="metric" id="netWorth">$ 0</div><div class="muted">Activos − pasivos, antes de ajustes</div></div>
+<div class="card"><h3>Margen bruto de ventas</h3><div class="metric" id="grossMargin">—</div><div class="muted">Según ventas de productos registradas</div></div>
+</div>
+<div class="section-head"><h2>Últimos movimientos</h2><button class="btn small" onclick="go('movimientos')">Ver y editar todos</button></div>
+<div id="recentMovements" class="tablewrap"></div>
+<div class="section-head"><h2>Productos destacados</h2><button class="btn small" onclick="go('productos')">Administrar catálogo</button></div>
+<div id="topProducts" class="tablewrap"></div>
+</section>
+
+<section id="movimientos" class="panel">
+<div class="section-head"><h2>Saldos iniciales</h2><span class="muted">Dinero y deudas que ya existían al comenzar a usar la app.</span></div>
+<div class="notice warn">Registra aquí el dinero disponible o las deudas que ya existían en la fecha de inicio. No son ingresos ni gastos nuevos. El dinero se suma a los saldos y activos; las deudas se suman a los pasivos. No registres el mismo valor otra vez en Patrimonio.</div>
+<div class="card"><form id="openingForm"><input type="hidden" id="openingId"><div class="formgrid">
+<div class="field"><label for="oDate">Fecha del saldo inicial</label><input id="oDate" type="date" required></div>
+<div class="field"><label for="oScope">Contabilidad</label><select id="oScope"><option value="personal">Personal</option><option value="negocio">CASA Lamprea</option></select></div>
+<div class="field"><label for="oKind">Tipo de saldo inicial</label><select id="oKind"><option value="activo">Dinero disponible / cuenta</option><option value="pasivo">Deuda pendiente</option></select></div>
+<div class="field"><label for="oAccount" id="oAccountLabel">Cuenta / ubicación del dinero</label><input id="oAccount" required placeholder="Ej. Efectivo, Bancolombia, Nequi"></div>
+<div class="field"><label for="oAmount">Saldo inicial (COP)</label><input id="oAmount" type="number" min="0" step="1" required></div>
+<div class="field full"><label for="oNote">Observaciones (opcional)</label><input id="oNote" placeholder="Saldo al comenzar el registro"></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" type="submit" id="saveOpening">Guardar saldo inicial</button><button class="btn secondary hidden" type="button" id="cancelOpening">Cancelar edición</button></div></form></div>
+<div id="openingTable" class="tablewrap"></div>
+<div class="section-head"><h2>Movimientos contables</h2><span class="muted">Edita o elimina registros; los saldos se recalculan.</span></div>
+<div class="card">
+<form id="movementForm">
+<input type="hidden" id="movementId">
+<div class="formgrid">
+<div class="field"><label for="mDate">Fecha</label><input id="mDate" type="date" required></div>
+<div class="field"><label for="mScope">Contabilidad</label><select id="mScope"><option value="personal">Personal</option><option value="negocio">CASA Lamprea</option></select></div>
+<div class="field"><label for="mType">Tipo de movimiento</label><select id="mType">
+<option value="ingreso">Ingreso personal</option><option value="gasto">Gasto personal</option><option value="venta">Venta no vinculada a producto</option><option value="gasto_negocio">Gasto del negocio</option><option value="aporte">Aporte del propietario a CASA Lamprea</option><option value="prestamo">Préstamo personal a CASA Lamprea</option><option value="retiro">Retiro del propietario desde CASA Lamprea</option><option value="devolucion">Devolución de préstamo a propietario</option><option value="otro_ingreso_negocio">Otro ingreso del negocio</option></select></div>
+<div class="field"><label for="mAmount">Importe (COP)</label><input id="mAmount" type="number" min="1" step="1" required></div>
+<div class="field"><label for="mCategory">Categoría</label><input id="mCategory" placeholder="Ej. Pensión, transporte, metal, servicios" required></div>
+<div class="field"><label for="mAccount">Cuenta / medio</label><input id="mAccount" placeholder="Ej. Banco, efectivo, billetera"></div>
+<div class="field full"><label for="mNote">Descripción / observaciones</label><textarea id="mNote" placeholder="Detalle de la operación"></textarea></div>
+<div class="field full"><label><input type="checkbox" id="mReconciled" style="width:auto"> Revisado / conciliado</label></div>
+</div>
+<div class="actions" style="margin-top:14px"><button class="btn" type="submit" id="saveMovement">Guardar movimiento</button><button class="btn secondary hidden" type="button" id="cancelMovement">Cancelar edición</button></div>
+</form>
+</div>
+<div class="section-head"><h2>Historial</h2><div class="field"><label for="movementFilter">Filtrar por contabilidad</label><select id="movementFilter"><option value="todos">Todas</option><option value="personal">Personal</option><option value="negocio">CASA Lamprea</option></select></div></div>
+<div id="movementTable" class="tablewrap"></div>
+</section>
+
+<section id="productos" class="panel">
+<div class="section-head"><h2>Catálogo e inventario</h2><span class="muted">Modifica productos sin alterar ventas históricas ya registradas.</span></div>
+<div class="card">
+<form id="productForm"><input type="hidden" id="productId">
+<div class="formgrid">
+<div class="field"><label for="pName">Nombre / referencia</label><input id="pName" required placeholder="Ej. Anillo Trilogía Zafiro"></div>
+<div class="field"><label for="pCategory">Categoría</label><input id="pCategory" required placeholder="Anillos, argollas, pulseras..."></div>
+<div class="field"><label for="pCost">Costo unitario actual (COP)</label><input id="pCost" type="number" min="0" step="1" required></div>
+<div class="field"><label for="pPrice">Precio de venta actual (COP)</label><input id="pPrice" type="number" min="1" step="1" required></div>
+<div class="field"><label for="pStock">Existencias iniciales / ajuste (unidades)</label><input id="pStock" type="number" min="0" step="1" required></div>
+<div class="field"><label for="pSku">Código interno (opcional)</label><input id="pSku" placeholder="Ej. CL-AN-001"></div>
+<div class="field full"><label for="pDesc">Descripción / materiales</label><textarea id="pDesc" placeholder="Metal, ley, piedras, talla, especificaciones..."></textarea></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" type="submit" id="saveProduct">Guardar producto</button><button class="btn secondary hidden" type="button" id="cancelProduct">Cancelar edición</button></div>
+</form></div>
+<div class="section-head"><h2>Registrar venta de producto</h2></div>
+<div class="card"><form id="saleForm"><div class="formgrid">
+<div class="field"><label for="sDate">Fecha</label><input id="sDate" type="date" required></div>
+<div class="field"><label for="sProduct">Producto</label><select id="sProduct" required></select></div>
+<div class="field"><label for="sQty">Unidades</label><input id="sQty" type="number" min="1" step="1" value="1" required></div>
+<div class="field"><label for="sPrice">Precio unitario aplicado (COP)</label><input id="sPrice" type="number" min="1" required></div>
+<div class="field"><label for="sDiscount">Descuento total (COP)</label><input id="sDiscount" type="number" min="0" value="0" required></div>
+<div class="field"><label for="sExtra">Otros costos de venta (COP)</label><input id="sExtra" type="number" min="0" value="0" required></div>
+<div class="field"><label for="sPayment">Forma de pago</label><select id="sPayment"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Crédito al cliente</option><option>Otro</option></select></div>
+<div class="field"><label for="sNote">Observación</label><input id="sNote" placeholder="Cliente, pedido, etc."></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" type="submit">Registrar venta y descontar inventario</button></div></form></div>
+<div class="section-head"><h2>Productos registrados</h2></div><div id="productTable" class="tablewrap"></div>
+<div class="section-head"><h2>Ventas por producto</h2></div><div id="salesTable" class="tablewrap"></div>
+</section>
+
+<section id="patrimonio" class="panel">
+<div class="section-head"><h2>Patrimonio consolidado</h2><span class="muted">Activos − pasivos = patrimonio neto</span></div>
+<div class="balance"><div class="card"><h3>Activos registrados</h3><div class="metric" id="assetsTotal">$ 0</div></div><div class="card"><h3>Pasivos registrados</h3><div class="metric" id="liabilitiesTotal">$ 0</div></div><div class="card"><h3>Patrimonio neto</h3><div class="metric" id="equityTotal">$ 0</div></div></div>
+<div class="card" style="margin-top:12px"><form id="assetForm"><input type="hidden" id="assetId"><div class="formgrid">
+<div class="field"><label for="aScope">Pertenece a</label><select id="aScope"><option value="personal">Personal</option><option value="negocio">CASA Lamprea</option></select></div>
+<div class="field"><label for="aType">Clasificación</label><select id="aType"><option value="activo">Activo</option><option value="pasivo">Pasivo / deuda</option></select></div>
+<div class="field"><label for="aCategory">Categoría</label><select id="aCategory"><option>Dinero en bancos / efectivo</option><option>Inmueble / terreno</option><option>Vehículo / motocicleta</option><option>Herramientas / maquinaria</option><option>Inventario</option><option>Cuenta por cobrar</option><option>Inversión</option><option>Hipoteca</option><option>Préstamo bancario</option><option>Tarjeta de crédito</option><option>Deuda con proveedor</option><option>Préstamo del propietario</option><option>Impuestos por pagar</option><option>Otra categoría</option></select></div>
+<div class="field"><label for="aName">Nombre / descripción</label><input id="aName" required placeholder="Ej. Motocicleta, pulidora, hipoteca"></div>
+<div class="field"><label for="aValue">Valor actual o saldo pendiente (COP)</label><input id="aValue" type="number" min="0" step="1" required></div>
+<div class="field"><label for="aDate">Fecha de valoración</label><input id="aDate" type="date" required></div>
+<div class="field full"><label for="aNote">Observaciones</label><textarea id="aNote"></textarea></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" type="submit" id="saveAsset">Guardar registro</button><button class="btn secondary hidden" type="button" id="cancelAsset">Cancelar edición</button></div></form></div>
+<div class="section-head"><h2>Activos y pasivos registrados</h2></div><div id="assetTable" class="tablewrap"></div>
+</section>
+
+<section id="informes" class="panel">
+<div class="section-head"><h2>Informes financieros</h2><span class="muted">Basados en los registros de esta aplicación.</span></div>
+<div class="card"><div class="formgrid">
+<div class="field"><label for="rScope">Contabilidad</label><select id="rScope"><option value="personal">Personal</option><option value="negocio">CASA Lamprea</option><option value="consolidado">Consolidado</option></select></div>
+<div class="field"><label for="rPeriod">Período</label><select id="rPeriod"><option value="month">Mensual</option><option value="quarter">Trimestral</option><option value="half">Semestral</option><option value="year">Anual</option><option value="all">Todo el historial</option></select></div>
+<div class="field"><label for="rDate">Fecha de referencia</label><input id="rDate" type="date"></div>
+<div class="field"><label for="rType">Informe</label><select id="rType"><option value="results">Ingresos, costos y gastos</option><option value="cash">Flujo de caja por movimientos</option><option value="patrimony">Balance patrimonial actual</option><option value="products">Rentabilidad por producto</option></select></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" id="runReport" type="button">Generar informe</button><button class="btn secondary" id="exportReport" type="button">Exportar informe CSV</button></div></div>
+<div id="reportOutput" style="margin-top:12px"></div>
+<div class="section-head"><h2>Análisis de crecimiento de CASA Lamprea</h2></div>
+<div id="growthAnalysis" class="card"></div>
+</section>
+
+<section id="ajustes" class="panel">
+<div class="section-head"><h2>Datos y respaldo</h2></div>
+<div class="card"><h3>Exportar / importar respaldo</h3><p class="muted">Descarga todos tus registros para conservar una copia o trasladarlos a otro navegador. El archivo incluye saldos iniciales, movimientos, productos, ventas y patrimonio.</p>
+<div class="actions"><button class="btn" id="backupBtn">Descargar copia JSON</button><label class="btn secondary" for="restoreFile">Importar copia JSON</label><input class="hidden" id="restoreFile" type="file" accept=".json,application/json"></div></div>
+<div class="card" style="margin-top:12px"><h3>Datos locales</h3><p class="muted">Los registros permanecen en este navegador y dispositivo. Borrar datos del navegador puede eliminarlos; conserva una copia de seguridad.</p><button class="btn danger" id="clearData">Borrar todos los datos de esta app</button></div>
+<div class="card" style="margin-top:12px"><h3>Sobre esta versión</h3><p class="muted">Herramienta de control gerencial en desarrollo. No es asesoría fiscal ni un sistema contable certificado. Los saldos calculados dependen de la integridad de los datos ingresados.</p></div>
+</section>
+</main>
+<footer>CASA Lamprea · “joyas con alma” · Versión local inicial. Haz copias de seguridad y verifica los registros antes de tomar decisiones financieras.</footer>
+<script>
+const KEY='mi_finanzas_casa_lamprea_v1';
+const today=()=>new Date().toISOString().slice(0,10);
+let db={openingBalances:[],movements:[],products:[],sales:[],assets:[]};
+try{const saved=localStorage.getItem(KEY);if(saved)db={...db,...JSON.parse(saved),openingBalances:Array.isArray(JSON.parse(saved).openingBalances)?JSON.parse(saved).openingBalances:[]}}catch(e){}
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function money(n){return '$ '+Math.round(Number(n)||0).toLocaleString('es-CO')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function go(tab){document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===tab));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));if(tab==='informes')runReport()}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
+function table(headers,rows){if(!rows.length)return '<div class="empty">No hay registros todavía.</div>';return '<div class="tablewrap"><table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>'}
+function movementEffect(m){
+ const n=Number(m.amount)||0;
+ if(m.type==='ingreso')return m.scope==='personal'?n:0;
+ if(m.type==='gasto')return m.scope==='personal'?-n:0;
+ if(m.type==='venta'||m.type==='otro_ingreso_negocio')return m.scope==='negocio'?n:0;
+ if(m.type==='gasto_negocio')return m.scope==='negocio'?-n:0;
+ if(m.type==='aporte'||m.type==='prestamo')return m.scope==='personal'?-n:n;
+ if(m.type==='retiro'||m.type==='devolucion')return m.scope==='personal'?n:-n;
+ return 0;
+}
+function openingTotal(scope){return db.openingBalances.filter(x=>(!scope||x.scope===scope)&&(x.kind||'activo')==='activo').reduce((sum,x)=>sum+(Number(x.amount)||0),0)}
+function openingLiabilitiesTotal(scope){return db.openingBalances.filter(x=>(!scope||x.scope===scope)&&x.kind==='pasivo').reduce((sum,x)=>sum+(Number(x.amount)||0),0)}
+function updateOpeningLabels(){const debt=document.getElementById('oKind').value==='pasivo';document.getElementById('oAccountLabel').textContent=debt?'Deuda / entidad acreedora':'Cuenta / ubicación del dinero';document.getElementById('oAccount').placeholder=debt?'Ej. Tarjeta de crédito, préstamo bancario':'Ej. Efectivo, Bancolombia, Nequi';document.getElementById('oAmount').previousElementSibling.textContent=debt?'Saldo de deuda pendiente (COP)':'Saldo inicial (COP)';document.getElementById('saveOpening').textContent=document.getElementById('openingId').value?'Guardar cambios':(debt?'Guardar deuda inicial':'Guardar saldo inicial')}
+function renderOpeningBalances(){const rows=db.openingBalances.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<tr><td>${esc(x.date)}</td><td>${x.scope==='personal'?'Personal':'CASA Lamprea'}</td><td><span class="pill">${(x.kind||'activo')==='pasivo'?'Deuda / pasivo':'Dinero / activo'}</span></td><td>${esc(x.account)}</td><td>${money(x.amount)}</td><td>${esc(x.note||'')}</td><td><div class="actions"><button class="btn secondary small" onclick="editOpening(${x.id})">Editar</button><button class="btn danger small" onclick="deleteOpening(${x.id})">Eliminar</button></div></td></tr>`);document.getElementById('openingTable').innerHTML=table(['Fecha','Contabilidad','Tipo','Cuenta / deuda','Valor inicial','Observaciones','Acciones'],rows)}
+function resetOpening(){document.getElementById('openingForm').reset();document.getElementById('openingId').value='';document.getElementById('oDate').value=today();document.getElementById('saveOpening').textContent='Guardar saldo inicial';document.getElementById('cancelOpening').classList.add('hidden');updateOpeningLabels()}
+document.getElementById('oKind').addEventListener('change',updateOpeningLabels);
+document.getElementById('openingForm').addEventListener('submit',e=>{e.preventDefault();const id=document.getElementById('openingId').value;const item={id:id?Number(id):Date.now()+3,date:document.getElementById('oDate').value,scope:document.getElementById('oScope').value,kind:document.getElementById('oKind').value,account:document.getElementById('oAccount').value.trim(),amount:Number(document.getElementById('oAmount').value),note:document.getElementById('oNote').value.trim()};if(!item.account||item.amount<0)return alert('Verifica la cuenta o deuda y el valor.');if(id)db.openingBalances=db.openingBalances.map(x=>x.id===Number(id)?item:x);else db.openingBalances.push(item);resetOpening();persist()});
+document.getElementById('cancelOpening').onclick=resetOpening;
+function editOpening(id){const x=db.openingBalances.find(y=>y.id===id);if(!x)return;document.getElementById('openingId').value=x.id;document.getElementById('oDate').value=x.date;document.getElementById('oScope').value=x.scope;document.getElementById('oKind').value=x.kind||'activo';document.getElementById('oAccount').value=x.account;document.getElementById('oAmount').value=x.amount;document.getElementById('oNote').value=x.note||'';document.getElementById('saveOpening').textContent='Guardar cambios';document.getElementById('cancelOpening').classList.remove('hidden');updateOpeningLabels();document.getElementById('saveOpening').textContent='Guardar cambios';document.getElementById('openingForm').scrollIntoView({behavior:'smooth',block:'start'})}
+function deleteOpening(id){if(confirm('¿Eliminar este saldo inicial? Los saldos y el patrimonio se recalcularán.')){db.openingBalances=db.openingBalances.filter(x=>x.id!==id);persist()}}
+function labelType(m){return ({ingreso:'Ingreso personal',gasto:'Gasto personal',venta:'Venta',gasto_negocio:'Gasto del negocio',aporte:'Aporte del propietario',prestamo:'Préstamo al negocio',retiro:'Retiro del propietario',devolucion:'Devolución de préstamo',otro_ingreso_negocio:'Otro ingreso del negocio'})[m.type]||m.type}
+function renderMovements(){
+ const filter=document.getElementById('movementFilter')?.value||'todos';
+ const list=db.movements.filter(m=>filter==='todos'||m.scope===filter).slice().sort((a,b)=>b.date.localeCompare(a.date));
+ document.getElementById('movementTable').innerHTML=table(['Fecha','Contabilidad','Tipo','Concepto','Importe','Estado','Acciones'],list.map(m=>`<tr><td>${esc(m.date)}</td><td>${m.scope==='personal'?'Personal':'CASA Lamprea'}</td><td>${esc(labelType(m))}</td><td>${esc(m.category)}<div class="muted">${esc(m.note||'')}</div></td><td>${money(m.amount)}</td><td>${m.reconciled?'<span class="pill">Revisado</span>':'Pendiente'}</td><td><div class="actions"><button class="btn secondary small" onclick="editMovement(${m.id})">Editar</button><button class="btn danger small" onclick="deleteMovement(${m.id})">Eliminar</button></div></td></tr>`));
+ document.getElementById('recentMovements').innerHTML=table(['Fecha','Tipo','Concepto','Importe'],db.movements.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(m=>`<tr><td>${esc(m.date)}</td><td>${esc(labelType(m))}</td><td>${esc(m.category)}</td><td>${money(m.amount)}</td></tr>`));
+}
+document.getElementById('movementFilter').addEventListener('change',renderMovements);
+function resetMovement(){document.getElementById('movementForm').reset();document.getElementById('movementId').value='';document.getElementById('mDate').value=today();document.getElementById('saveMovement').textContent='Guardar movimiento';document.getElementById('cancelMovement').classList.add('hidden')}
+document.getElementById('cancelMovement').onclick=resetMovement;
+document.getElementById('movementForm').addEventListener('submit',e=>{e.preventDefault();const id=document.getElementById('movementId').value;const m={id:id?Number(id):Date.now(),date:mDate.value,scope:mScope.value,type:mType.value,amount:Number(mAmount.value),category:mCategory.value.trim(),account:mAccount.value.trim(),note:mNote.value.trim(),reconciled:mReconciled.checked};if(id)db.movements=db.movements.map(x=>x.id===Number(id)?m:x);else db.movements.push(m);resetMovement();persist()});
+function editMovement(id){const m=db.movements.find(x=>x.id===id);if(!m)return;go('movimientos');movementId.value=m.id;mDate.value=m.date;mScope.value=m.scope;mType.value=m.type;mAmount.value=m.amount;mCategory.value=m.category;mAccount.value=m.account||'';mNote.value=m.note||'';mReconciled.checked=!!m.reconciled;saveMovement.textContent='Guardar cambios';cancelMovement.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+function deleteMovement(id){if(confirm('¿Eliminar este movimiento? Los saldos se recalcularán.')){db.movements=db.movements.filter(x=>x.id!==id);persist()}}
+function renderProducts(){
+ const rows=db.products.map(p=>`<tr><td>${esc(p.name)}<div class="muted">${esc(p.sku||'')}</div></td><td>${esc(p.category)}</td><td>${p.stock}</td><td>${money(p.cost)}</td><td>${money(p.price)}</td><td>${p.price?((p.price-p.cost)/p.price*100).toFixed(1)+'%':'—'}</td><td><div class="actions"><button class="btn secondary small" onclick="editProduct(${p.id})">Editar</button><button class="btn danger small" onclick="deleteProduct(${p.id})">Eliminar</button></div></td></tr>`);
+ document.getElementById('productTable').innerHTML=table(['Producto','Categoría','Stock','Costo actual','Precio actual','Margen teórico','Acciones'],rows);
+ const sel=document.getElementById('sProduct');const prev=sel.value;sel.innerHTML=db.products.map(p=>`<option value="${p.id}">${esc(p.name)} · stock ${p.stock}</option>`).join('');if(db.products.some(p=>String(p.id)===prev))sel.value=prev;updateSalePrice();
+ const saleRows=db.sales.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`<tr><td>${esc(s.date)}</td><td>${esc(s.name)}</td><td>${s.qty}</td><td>${money(s.revenue)}</td><td>${money(s.cost)}</td><td>${money(s.profit)}</td><td><button class="btn secondary small" onclick="editSale(${s.id})">Editar</button> <button class="btn danger small" onclick="deleteSale(${s.id})">Eliminar</button></td></tr>`);
+ document.getElementById('salesTable').innerHTML=table(['Fecha','Producto','Unidades','Ingreso neto','Costo vendido','Utilidad estimada','Acciones'],saleRows);
+ document.getElementById('topProducts').innerHTML=table(['Producto','Unidades','Ingresos netos','Utilidad estimada'],productStats().sort((a,b)=>b.profit-a.profit).slice(0,5).map(p=>`<tr><td>${esc(p.name)}</td><td>${p.qty}</td><td>${money(p.revenue)}</td><td>${money(p.profit)}</td></tr>`));
+}
+function resetProduct(){productForm.reset();productId.value='';saveProduct.textContent='Guardar producto';cancelProduct.classList.add('hidden')}
+cancelProduct.onclick=resetProduct;
+productForm.addEventListener('submit',e=>{e.preventDefault();const id=productId.value;const p={id:id?Number(id):Date.now(),name:pName.value.trim(),category:pCategory.value.trim(),cost:Number(pCost.value),price:Number(pPrice.value),stock:Number(pStock.value),sku:pSku.value.trim(),desc:pDesc.value.trim()};if(id){const old=db.products.find(x=>x.id===Number(id));p.stock=Number(pStock.value);db.products=db.products.map(x=>x.id===Number(id)?p:x)}else db.products.push(p);resetProduct();persist()});
+function editProduct(id){const p=db.products.find(x=>x.id===id);if(!p)return;go('productos');productId.value=p.id;pName.value=p.name;pCategory.value=p.category;pCost.value=p.cost;pPrice.value=p.price;pStock.value=p.stock;pSku.value=p.sku||'';pDesc.value=p.desc||'';saveProduct.textContent='Guardar cambios';cancelProduct.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+function deleteProduct(id){if(db.sales.some(s=>s.productId===id)){alert('Este producto tiene ventas asociadas. No se puede eliminar para conservar la trazabilidad. Edita la referencia o déjala inactiva en una versión futura.');return}if(confirm('¿Eliminar este producto?')){db.products=db.products.filter(p=>p.id!==id);persist()}}
+function updateSalePrice(){const p=db.products.find(p=>String(p.id)===sProduct.value);if(p&&!sPrice.dataset.manual)sPrice.value=p.price}
+sProduct.addEventListener('change',()=>{sPrice.dataset.manual='';updateSalePrice()});sPrice.addEventListener('input',()=>sPrice.dataset.manual='1');
+saleForm.addEventListener('submit',e=>{e.preventDefault();const p=db.products.find(p=>p.id===Number(sProduct.value));const qty=Number(sQty.value),price=Number(sPrice.value),discount=Number(sDiscount.value),extra=Number(sExtra.value);if(!p||qty<1||qty>p.stock||!Number.isInteger(qty)||price<=0||discount<0||discount>qty*price||extra<0){alert('Verifica producto, existencias, precio y descuentos.');return}const revenue=qty*price-discount;const cost=qty*p.cost;const s={id:Date.now(),date:sDate.value,productId:p.id,name:p.name,qty,price,discount,extra,payment:sPayment.value,note:sNote.value,revenue,cost,profit:revenue-cost-extra};db.sales.push(s);p.stock-=qty;db.movements.push({id:Date.now()+1,date:s.date,scope:'negocio',type:'venta',amount:revenue,category:'Venta de producto: '+p.name,account:s.payment,note:'Venta vinculada #'+s.id,reconciled:false,linkedSale:s.id});resetSale();persist()});
+function resetSale(){saleForm.reset();sDate.value=today();sQty.value=1;sDiscount.value=0;sExtra.value=0;sPrice.dataset.manual='';updateSalePrice()}
+function editSale(id){const s=db.sales.find(x=>x.id===id);if(!s)return;const newPrice=prompt('Nuevo precio unitario aplicado (COP):',s.price);if(newPrice===null)return;const p=Number(newPrice);if(!Number.isFinite(p)||p<=0){alert('Precio inválido');return}const newDiscount=prompt('Nuevo descuento total (COP):',s.discount);if(newDiscount===null)return;const d=Number(newDiscount);if(!Number.isFinite(d)||d<0||d>s.qty*p){alert('Descuento inválido');return}s.price=p;s.discount=d;s.revenue=s.qty*p-d;s.cost=s.qty*(db.products.find(x=>x.id===s.productId)?.cost??(s.cost/s.qty));s.profit=s.revenue-s.cost-s.extra;const m=db.movements.find(m=>m.linkedSale===s.id);if(m){m.amount=s.revenue;m.date=s.date}persist()}
+function deleteSale(id){const s=db.sales.find(x=>x.id===id);if(!s)return;if(!confirm('¿Eliminar esta venta y revertir las existencias?'))return;const p=db.products.find(x=>x.id===s.productId);if(p)p.stock+=s.qty;db.sales=db.sales.filter(x=>x.id!==id);db.movements=db.movements.filter(m=>m.linkedSale!==id);persist()}
+function productStats(){return db.products.map(p=>{const sales=db.sales.filter(s=>s.productId===p.id);return {id:p.id,name:p.name,qty:sales.reduce((a,s)=>a+s.qty,0),revenue:sales.reduce((a,s)=>a+s.revenue,0),profit:sales.reduce((a,s)=>a+s.profit,0)}})}
+function renderAssets(){const rows=db.assets.map(a=>`<tr><td>${esc(a.date)}</td><td>${a.scope==='personal'?'Personal':'CASA Lamprea'}</td><td><span class="pill">${a.type==='activo'?'Activo':'Pasivo'}</span></td><td>${esc(a.category)}</td><td>${esc(a.name)}<div class="muted">${esc(a.note||'')}</div></td><td>${money(a.value)}</td><td><div class="actions"><button class="btn secondary small" onclick="editAsset(${a.id})">Editar</button><button class="btn danger small" onclick="deleteAsset(${a.id})">Eliminar</button></div></td></tr>`);assetTable.innerHTML=table(['Fecha','Contabilidad','Tipo','Categoría','Descripción','Valor / saldo','Acciones'],rows)}
+function resetAsset(){assetForm.reset();assetId.value='';aDate.value=today();saveAsset.textContent='Guardar registro';cancelAsset.classList.add('hidden')}
+assetForm.addEventListener('submit',e=>{e.preventDefault();const id=assetId.value;const a={id:id?Number(id):Date.now(),scope:aScope.value,type:aType.value,category:aCategory.value,name:aName.value.trim(),value:Number(aValue.value),date:aDate.value,note:aNote.value.trim()};if(id)db.assets=db.assets.map(x=>x.id===Number(id)?a:x);else db.assets.push(a);resetAsset();persist()});
+function editAsset(id){const a=db.assets.find(x=>x.id===id);if(!a)return;go('patrimonio');assetId.value=a.id;aScope.value=a.scope;aType.value=a.type;aCategory.value=a.category;aName.value=a.name;aValue.value=a.value;aDate.value=a.date;aNote.value=a.note||'';saveAsset.textContent='Guardar cambios';cancelAsset.classList.remove('hidden')}
+function deleteAsset(id){if(confirm('¿Eliminar este registro patrimonial?')){db.assets=db.assets.filter(a=>a.id!==id);persist()}}
+cancelAsset.onclick=resetAsset;
+function periodBounds(date,period){const d=new Date(date+'T12:00:00');let start=new Date(d),end=new Date(d);if(period==='month'){start.setDate(1);end=new Date(d.getFullYear(),d.getMonth()+1,0)}else if(period==='quarter'){const q=Math.floor(d.getMonth()/3);start=new Date(d.getFullYear(),q*3,1);end=new Date(d.getFullYear(),q*3+3,0)}else if(period==='half'){const h=d.getMonth()<6?0:6;start=new Date(d.getFullYear(),h,1);end=new Date(d.getFullYear(),h+6,0)}else if(period==='year'){start=new Date(d.getFullYear(),0,1);end=new Date(d.getFullYear(),11,31)}else return ['0000-01-01','9999-12-31'];return [start.toISOString().slice(0,10),end.toISOString().slice(0,10)]}
+function reportScopeMatch(scope,item){return scope==='consolidado'||(item.scope===scope)}
+function runReport(){const scope=rScope.value,period=rPeriod.value,date=rDate.value||today(),bounds=periodBounds(date,period);let moves=db.movements.filter(m=>m.date>=bounds[0]&&m.date<=bounds[1]&&reportScopeMatch(scope,m));let sales=db.sales.filter(s=>s.date>=bounds[0]&&s.date<=bounds[1]&&(scope!=='personal'));let out='';
+ if(rType.value==='patrimony'){const a=db.assets.filter(x=>x.type==='activo'&&(scope==='consolidado'||x.scope===scope)).reduce((s,x)=>s+x.value,0)+openingTotal(scope==='consolidado'?null:scope);const l=db.assets.filter(x=>x.type==='pasivo'&&(scope==='consolidado'||x.scope===scope)).reduce((s,x)=>s+x.value,0)+openingLiabilitiesTotal(scope==='consolidado'?null:scope);out=`<div class="grid"><div class="card"><h3>Activos</h3><div class="metric">${money(a)}</div></div><div class="card"><h3>Pasivos</h3><div class="metric">${money(l)}</div></div><div class="card"><h3>Patrimonio neto</h3><div class="metric">${money(a-l)}</div></div></div><p class="muted">Balance basado en los activos y pasivos registrados actualmente; no es una reconstrucción histórica a la fecha seleccionada.</p>`}
+ else if(rType.value==='products'){const stats=productStats();out=table(['Producto','Unidades','Ingresos netos','Costo','Utilidad estimada','Margen'],stats.map(p=>{const ss=sales.filter(s=>s.productId===p.id);const rev=ss.reduce((a,s)=>a+s.revenue,0),cost=ss.reduce((a,s)=>a+s.cost+s.extra,0),profit=rev-cost,qty=ss.reduce((a,s)=>a+s.qty,0);return `<tr><td>${esc(p.name)}</td><td>${qty}</td><td>${money(rev)}</td><td>${money(cost)}</td><td>${money(profit)}</td><td>${rev?(100*profit/rev).toFixed(1)+'%':'—'}</td>`}));}
+ else {const income=moves.filter(m=>['ingreso','venta','otro_ingreso_negocio'].includes(m.type)).reduce((s,m)=>s+m.amount,0);const expenses=moves.filter(m=>['gasto','gasto_negocio'].includes(m.type)).reduce((s,m)=>s+m.amount,0);const rev=sales.reduce((s,x)=>s+x.revenue,0),cost=sales.reduce((s,x)=>s+x.cost+x.extra,0);out=`<div class="grid"><div class="card"><h3>Ingresos registrados</h3><div class="metric">${money(income)}</div></div><div class="card"><h3>Gastos registrados</h3><div class="metric">${money(expenses)}</div></div><div class="card"><h3>Resultado de movimientos</h3><div class="metric">${money(income-expenses)}</div></div><div class="card"><h3>Ventas de productos</h3><div class="metric">${money(rev)}</div></div></div><p class="muted">Las ventas vinculadas a productos se muestran por separado para evitar sumarlas dos veces a los movimientos vinculados. En el estado de resultados definitivo se integrarán con el costo de ventas y los demás asientos.</p>`;
+ if(rType.value==='cash'){const net=moves.reduce((s,m)=>s+movementEffect(m),0);out+=`<div class="card" style="margin-top:12px"><h3>Variación calculada de caja por movimientos registrados</h3><div class="metric">${money(net)}</div><p class="muted">Es una estimación basada en tipos de movimiento; se recomienda conciliar con saldos iniciales y cuentas bancarias.</p></div>`}}
+ reportOutput.innerHTML=`<div class="card"><h3>Período: ${bounds[0]} a ${bounds[1]}</h3><p class="muted">Alcance: ${scope==='personal'?'Personal':scope==='negocio'?'CASA Lamprea':'Consolidado'}</p>${out}</div>`;window.currentReport={scope,period,bounds,type:rType.value,html:out}}
+document.getElementById('runReport').onclick=runReport;
+document.getElementById('exportReport').onclick=()=>{const rows=[['Fecha','Contabilidad','Tipo','Categoría','Importe','Cuenta','Observaciones'],...db.movements.map(m=>[m.date,m.scope,labelType(m),m.category,m.amount,m.account||'',m.note||''])];download('informe_movimientos.csv',rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8')};
+function renderGrowth(){const stats=productStats().filter(p=>p.qty>0).sort((a,b)=>b.profit-a.profit);const low=productStats().filter(p=>p.qty===0&&db.products.find(x=>x.id===p.id)?.stock>0);let text='Registra ventas y costos reales para recibir recomendaciones más precisas.';if(stats.length){const best=stats[0],byQty=[...stats].sort((a,b)=>b.qty-a.qty)[0],worst=[...stats].sort((a,b)=>a.profit-b.profit)[0];text=`<p><strong>Mayor utilidad acumulada:</strong> ${esc(best.name)} (${money(best.profit)}).</p><p><strong>Mayor volumen vendido:</strong> ${esc(byQty.name)} (${byQty.qty} unidades).</p>`;if(worst.profit<best.profit)text+=`<p><strong>Revisar:</strong> ${esc(worst.name)}. Su utilidad acumulada es ${money(worst.profit)}; verifica precio, costos y descuentos antes de decidir.</p>`}if(low.length)text+=`<p><strong>Inventario sin ventas registradas:</strong> ${low.map(p=>esc(p.name)).join(', ')}. Revisa el período de observación antes de reducir compras.</p>`;text+='<p class="muted">Estas sugerencias describen los datos ingresados; no predicen demanda ni sustituyen el análisis de gastos operativos.</p>';growthAnalysis.innerHTML=text}
+function renderAll(){
+ const personal=openingTotal('personal')+db.movements.filter(m=>m.scope==='personal').reduce((s,m)=>s+movementEffect(m),0);
+ const business=openingTotal('negocio')+db.movements.filter(m=>m.scope==='negocio').reduce((s,m)=>s+movementEffect(m),0);
+ const assets=db.assets.filter(a=>a.type==='activo').reduce((s,a)=>s+a.value,0)+openingTotal(),liabs=db.assets.filter(a=>a.type==='pasivo').reduce((s,a)=>s+a.value,0)+openingLiabilitiesTotal();
+ const revenue=db.sales.reduce((s,x)=>s+x.revenue,0),profit=db.sales.reduce((s,x)=>s+x.profit,0);
+ personalBalance.textContent=money(personal);businessBalance.textContent=money(business);netWorth.textContent=money(assets-liabs);grossMargin.textContent=revenue?(100*profit/revenue).toFixed(1)+'%':'—';
+ assetsTotal.textContent=money(assets);liabilitiesTotal.textContent=money(liabs);equityTotal.textContent=money(assets-liabs);
+ renderOpeningBalances();renderMovements();renderProducts();renderAssets();renderGrowth();if(document.getElementById('informes').classList.contains('active'))runReport();
+}
+function download(name,data,type){const blob=new Blob([data],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+backupBtn.onclick=()=>download('mi_finanzas_casa_lamprea_backup.json',JSON.stringify(db,null,2),'application/json');
+restoreFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const parsed=JSON.parse(await f.text());if(!parsed||!Array.isArray(parsed.movements)||!Array.isArray(parsed.products)||!Array.isArray(parsed.sales)||!Array.isArray(parsed.assets))throw Error('Formato');if(confirm('Importar reemplazará los datos actuales. ¿Continuar?')){db={...parsed,openingBalances:Array.isArray(parsed.openingBalances)?parsed.openingBalances:[]};persist();alert('Copia importada correctamente.')}}catch(err){alert('No se pudo importar: archivo no válido.')}e.target.value=''};
+clearData.onclick=()=>{if(confirm('Esto borrará todos los movimientos, productos, ventas y registros patrimoniales guardados en esta app. Descarga primero una copia si la necesitas. ¿Continuar?')){db={openingBalances:[],movements:[],products:[],sales:[],assets:[]};persist();resetOpening();resetMovement();resetProduct();resetSale();resetAsset()}}
+oDate.value=today();updateOpeningLabels();mDate.value=today();sDate.value=today();aDate.value=today();rDate.value=today();today && (document.getElementById('today').textContent=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'}));
+renderAll();
+</script>
+</body>
+</html>
